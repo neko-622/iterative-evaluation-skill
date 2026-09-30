@@ -1,2 +1,106 @@
-# iterative-evaluation-skill
-A reusable AI skill for designing weighted multi-dimensional evaluation systems and iteratively improving deliverables via independent sub-agent evaluation until a target score is reached.
+# Iterative Evaluation Skill
+
+> 一个可复用的 AI 技能：设计**加权多维评价体系**，通过**独立子代理**对交付物打分，并迭代优化直到达标。
+
+![Workflow](https://img.shields.io/badge/workflow-design--evaluate--iterate-blue)
+![Dimensions](https://img.shields.io/badge/dimensions-6--8%20weighted-orange)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+## ✨ 简介
+
+`iterative-evaluation` 是一个面向 AI Agent 的质量保证技能。它通过「设计评价量表 → 起草交付物 → 独立代理评价 → 未达标则修复并重评」的闭环，确保交付物达到预设的质量目标线。
+
+整个流程产出三件交付物：
+
+| 产物 | 说明 |
+|------|------|
+| **评价量表** (HTML) | N 维加权评分体系，含权重、4 档评分标准、目标线 |
+| **最终交付物** (HTML) | 迭代后的达标版本 (v2/v3/...) |
+| **迭代报告** (HTML) | v1→v2 的评分对比、缺陷诊断、改进记录 |
+
+## 🎯 适用场景
+
+- 需要为交付物设计「评价体系 / 评价量表」并设定目标分数
+- 希望由**独立代理**评判交付物质量，避免自评偏差
+- 任何需要**结构化质量保证**且有数值化通过/失败阈值的任务
+
+典型触发语：
+> "设计一个评价体系"、"和之前一样做评价"、"迭代优化到达标"、"评判一下这个交付物"
+
+## 🔄 工作流程
+
+```
+┌─────────────────────────────────────────────────┐
+│  1. 设计评价量表 (Evaluation Scale)              │
+│     · N 维加权体系 · 4 档评分 · 目标线           │
+├─────────────────────────────────────────────────┤
+│  2. 起草交付物 v1 (Draft Deliverable)            │
+├─────────────────────────────────────────────────┤
+│  3. 独立 Agent 评价 (Independent Evaluation)     │
+│     · 逐维打分 · 汇总总分 · 判定是否达标         │
+├─────────────────┬───────────────────────────────┤
+│  4a. 未达标     │  4b. 已达标                    │
+│  · 缺陷诊断     │  · 确认结论                    │
+│  · 定向修复     │  · 生成迭代报告                │
+│  · 回到 Step 3  │  · 结束                        │
+└─────────────────┴───────────────────────────────┘
+```
+
+### 评价体系设计要点
+
+- **维度选择**：6–8 个维度，覆盖完整性、资源质量、画像匹配、可执行性、时效性、结构清晰度、可验证性、实用增值性等
+- **权重分配**：核心维度 15–18 分，执行维度 10–15 分，支撑维度 8–10 分，增强维度 6–8 分（合计 100）
+- **四档评分**：优 = 100% 权重 · 良 = 75% · 中 = 50% · 差 = 25%
+- **目标线**：通常 90–95 分，存在外部不确定性时可下调 2–4 分
+
+## 🚀 安装为 Skill
+
+将本仓库克隆到你的 skills 目录即可：
+
+```bash
+# 方式一：直接克隆
+git clone https://github.com/neko-622/iterative-evaluation-skill.git ~/.trae/skills/iterative-evaluation
+
+# 方式二：作为子模块
+git submodule add https://github.com/neko-622/iterative-evaluation-skill.git skills/iterative-evaluation
+```
+
+安装后，AI Agent 在遇到质量评价类需求时会自动加载 `SKILL.md` 并按流程执行。
+
+## 📁 仓库结构
+
+```
+iterative-evaluation-skill/
+├── SKILL.md      # 技能定义（含完整工作流、设计规范、检查清单）
+└── README.md     # 本文件
+```
+
+## 📐 设计规范
+
+所有 HTML 交付物采用统一的暗色编辑风格：
+
+```css
+:root{
+  --bg:#0c0b10; --bg2:#15141b; --bg3:#1d1b25;
+  --ink:#eae6e0; --muted:#8a8595; --rule:#2a2735;
+  --accent:#d4a574; --accent2:#6cae75;
+  --warn:#e8956b; --bad:#c85a5a; --good:#6cae75;
+}
+```
+
+- **标题字体**：Fraunces（衬线，600–800）
+- **正文字体**：Manrope（400–700）
+- **数据/代码**：JetBrains Mono
+
+## ⚠️ 质量规则
+
+1. **评价独立性**：评价代理必须与内容创建者分离，使用独立子代理
+2. **严格评分**：不因版本号递增而放松标准，后期版本反而应更严格
+3. **完整内容投喂**：评价代理无对话历史，必须提供完整交付物内容和全部评价标准
+4. **逐维必评**：每个维度都必须打分，不允许跳过或标记 N/A
+5. **可操作反馈**：每个「良」及以下评级必须附带具体改进建议
+6. **版本追踪**：维护清晰的版本号 (v1, v2, v3...) 并记录变更
+
+## 📄 License
+
+MIT License — 自由使用、修改、分发。
